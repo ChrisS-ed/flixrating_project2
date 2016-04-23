@@ -22,9 +22,9 @@ app.get('/films/:filmTitle', function(request, response) {
         });
 
         res.on('end', function() {
-          console.log(body)
-          // var film = JSON.parse(body)
-          // response.send(film['FILMTITLE' + request.params.filmTitle]);
+          console.log(body);
+          var film = JSON.parse(body);
+          response.send(film[request.params.filmTitle]);
         })
 
     });
