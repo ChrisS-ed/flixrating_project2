@@ -17,47 +17,48 @@ Film.prototype = {
   }
 }
 
-// window.onload = function() {
+window.onload = function() {
 
-//   var form = document.querySelector('#isbnSearch');
-//   var input = document.querySelector('#isbnInput');
-//   var bookView = document.querySelector('#bookDisplay');
-//   var storedBooksView = document.querySelector('#storedBooks');
+  var form = document.querySelector('#filmSearch');
+  var input = document.querySelector('#filmInput');
+  // var bookView = document.querySelector('#bookDisplay');
+  // var storedBooksView = document.querySelector('#storedBooks');
 
-//   var books = JSON.parse( localStorage.getItem('books') ) || [];
+  // var books = JSON.parse( localStorage.getItem('books') ) || [];
 
-//   var displayBooks = function() {
-//     storedBooksView.innerHTML = '';
+  // var displayBooks = function() {
+  //   storedBooksView.innerHTML = '';
 
-//     for (book in books) {
-//       var data = books[book];
-//       var li = document.createElement('li');
-//       li.innerHTML = "<img src='" + data.cover.small + "'>" + data.title + '<button class="removeBook" data-id="' + book + '">Remove Book</button>';
-//       storedBooksView.appendChild(li);
-//     }
+  //   for (book in books) {
+  //     var data = books[book];
+  //     var li = document.createElement('li');
+  //     li.innerHTML = "<img src='" + data.cover.small + "'>" + data.title + '<button class="removeBook" data-id="' + book + '">Remove Book</button>';
+  //     storedBooksView.appendChild(li);
+  //   }
 
-//   }
+  // }
 
-//   form.onsubmit = function(event) {
-//     event.preventDefault();
-//     var isbn = input.value;
-//     var currentBook = new Book(isbn)
+  form.onsubmit = function(event) {
+    event.preventDefault();
+    var filmTitle = input.value;
+    var currentFilm = new Film(filmTitle);
+    console.log(currentFilm);
 
-//     currentBook.get(function() {
-//       var data = currentBook.data;
-//       var bookDisplay = "<h4>" + data.title + "</h4><img src='"+ data.cover.large + "'><button id='addBook'>Add to list</button>";
-//       bookView.innerHTML = bookDisplay;
+    // currentFilm.get(function() {
+    //   // var data = currentBook.data;
+    //   // var bookDisplay = "<h4>" + data.title + "</h4><img src='"+ data.cover.large + "'><button id='addBook'>Add to list</button>";
+    //   // bookView.innerHTML = bookDisplay;
 
-//       document.querySelector('#addBook').onclick = function() {
-//         books.push(data);
-//         localStorage.setItem('books', JSON.stringify(books));
-//         displayBooks();
-//       }
-//     })
+    //   // document.querySelector('#addBook').onclick = function() {
+    //   //   books.push(data);
+    //   //   localStorage.setItem('books', JSON.stringify(books));
+    //   //   displayBooks();
+    //   // }
+    // })
 
-//   }
+  }
 
-//   displayBooks();
+  // displayBooks();
 
-// }
+}
 
