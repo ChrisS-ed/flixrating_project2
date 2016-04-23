@@ -13,8 +13,19 @@ app.listen('3000', function() {
 app.get('/films/:filmTitle', function(request, response) {
     // In here we will make our HTTP request to the OMDB API
 
-    http.get('http://www.omdbapi.com/?t=FILMTITLE'+ request.params.filmTitle + '&y=&plot=short&r=json', function(res) {
-        console.log(res.statusCode);
+    http.get('http://www.omdbapi.com/?t='+ request.params.filmTitle + '&y=&plot=short&r=json', function(res) {
+        
+        var body = '';
+        res.on('data', function(d) {
+          console.log(d);
+          body += d;
+        });
+
+        res.on('end', function() {
+          console.log(body)
+          // var film = JSON.parse(body)
+          // response.send(film['FILMTITLE' + request.params.filmTitle]);
+        })
 
     });
 
