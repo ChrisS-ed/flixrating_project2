@@ -1,5 +1,5 @@
 {
-  "name": "flixrating",
+  "name": "reading_list",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,6 +11,6 @@
   "dependencies": {
     "ejs": "^2.4.1",
     "express": "^4.13.4",
-    "express-ejs-layouts": "^2.1.0"
+    "express-ejs-layouts": "^2.0.0"
   }
 }

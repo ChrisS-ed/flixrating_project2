@@ -11,16 +11,12 @@ app.use(express.static('public'));
 
 
 app.get('/films', function(req, res) {
-    res.render('films')
+    res.render("films");
 });
 
-app.get('/films', function(req, res) {
-  res.send('Hello World!') 
-});
-
-app.listen('3000', function() {
-  console.log('Serving on port 3000')
-});
+// app.get('/films', function(req, res) {
+//   res.send('Hello World!') 
+// });
 
 app.get('/films/:filmTitle', function(request, response) {
     // In here we will make our HTTP request to the OMDB API
@@ -41,4 +37,8 @@ app.get('/films/:filmTitle', function(request, response) {
 
     });
 
+});
+
+app.listen('3000', function() {
+  console.log('Serving on port 3000')
 });
