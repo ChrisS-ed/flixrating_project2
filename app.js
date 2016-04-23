@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var expressLayouts = require('express-ejs-layouts');
 var http = require('http');
 
 app.get('/films', function(req, res) {
