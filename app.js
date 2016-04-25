@@ -25,14 +25,16 @@ app.get('/films/:filmTitle', function(request, response) {
         
         var body = '';
         res.on('data', function(d) {
-          console.log(d);
+          console.log("DATA: ", d);
           body += d;
         });
 
         res.on('end', function() {
-          console.log(body);
-          var film = JSON.parse(body);
-          response.send(film[request.params.filmTitle]);
+          // console.log("BODY: ", body);
+          var film = JSON.parse( body );
+          // console.log("FILM: ", film);
+          // console.log("FILM TITLE: ", film.Title);
+          response.send( film );
         })
 
     });
