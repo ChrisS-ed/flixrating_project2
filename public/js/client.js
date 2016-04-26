@@ -18,8 +18,10 @@ Film.prototype = {
 
 window.onload = function() {
 
-  var form = document.querySelector('#filmSearch');
-  var input = document.querySelector('#filmInput');
+  var form = document.querySelector('#filmSearch70s');
+  var input1 = document.querySelector('#film70sInput1');
+  var input2 = document.querySelector('#film70sInput2');
+  var input3 = document.querySelector('#film70sInput3');
   var filmView = document.querySelector('#filmDisplay');
   // var storedFilmsView = document.querySelector('#storedFilms');
 
@@ -37,7 +39,7 @@ window.onload = function() {
 
   form.onsubmit = function(event) {
     event.preventDefault();
-    var filmTitle = input.value;
+    var filmTitle = input1.value;
     var currentFilm = new Film( filmTitle );
     console.log(currentFilm);
 
