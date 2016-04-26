@@ -72,6 +72,21 @@ window.onload = function() {
       console.log( data );
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
+    }, handleThirdFilm())
+  }
+
+  var handleThirdFilm = function() {
+    console.log("IN handleThirdFilm");
+    event.preventDefault();
+    var filmTitle = input3.value;
+    var currentFilm = new Film( filmTitle );
+    console.log(currentFilm);
+
+    currentFilm.get( function() {
+      var data = currentFilm.data;
+      console.log( data );
+      var filmDisplay = "<h4>" + data.Title + "</h4>";
+      filmView.innerHTML = filmDisplay;
     })
   }
 
