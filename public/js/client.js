@@ -55,11 +55,25 @@ window.onload = function() {
         //  console.log("From local storage: ", JSON.parse(localStorage.getItem('films'))[0].Title);
         // displayFilms();
       
-    })
+    }, handleSecondFilm())
 
   }
 
   // displayFilms();
+  var handleSecondFilm = function() {
+    console.log("IN handleSecondFilm");
+    event.preventDefault();
+    var filmTitle = input2.value;
+    var currentFilm = new Film( filmTitle );
+    console.log(currentFilm);
+
+    currentFilm.get( function() {
+      var data = currentFilm.data;
+      console.log( data );
+      var filmDisplay = "<h4>" + data.Title + "</h4>";
+      filmView.innerHTML = filmDisplay;
+    })
+  }
 
 }
 
