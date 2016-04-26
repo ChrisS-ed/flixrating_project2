@@ -22,21 +22,22 @@ window.onload = function() {
   var form = document.querySelector('#filmSearch');
   var input = document.querySelector('#filmInput');
   var filmView = document.querySelector('#filmDisplay');
-  // var storedBooksView = document.querySelector('#storedBooks');
+  var storedFilmsView = document.querySelector('#storedFilms');
 
-  // var books = JSON.parse( localStorage.getItem('books') ) || [];
+  // var films = JSON.parse( localStorage.getItem('films') ) || [];
+  var films = [];
 
-  // var displayBooks = function() {
-  //   storedBooksView.innerHTML = '';
+  var displayFilms = function() {
+    storedFilmsView.innerHTML = '';
 
-  //   for (book in books) {
-  //     var data = books[book];
-  //     var li = document.createElement('li');
-  //     li.innerHTML = "<img src='" + data.cover.small + "'>" + data.title + '<button class="removeBook" data-id="' + book + '">Remove Book</button>';
-  //     storedBooksView.appendChild(li);
-  //   }
+    for (film in films) {
+      var data = films[film];
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + data.Title + "</h4>";
+      storedFilmsView.appendChild(li);
+    }
 
-  // }
+  }
 
   form.onsubmit = function(event) {
     event.preventDefault();
@@ -51,15 +52,15 @@ window.onload = function() {
       filmView.innerHTML = filmDisplay;
 
       // document.querySelector('#addBook').onclick = function() {
-      //   books.push(data);
-      //   localStorage.setItem('books', JSON.stringify(books));
-      //   displayBooks();
+         films.push(data);
+         localStorage.setItem('films', JSON.stringify(films));
+        displayFilms();
       // }
     })
 
   }
 
-  // displayBooks();
+  // displayFilms();
 
 }
 
