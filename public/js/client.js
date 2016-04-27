@@ -18,6 +18,12 @@ Film.prototype = {
 
 window.onload = function() {
 
+  input70sfilms();
+
+}
+
+var input70sfilms = function() {
+
   var form = document.querySelector('#filmSearch70s');
   var input1 = document.querySelector('#film70sInput1');
   var input2 = document.querySelector('#film70sInput2');
@@ -48,6 +54,8 @@ window.onload = function() {
       console.log( data );
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
+
+      var overallScore1 = calculateScore(1, data);
 
       // add film to films array and put into local storage
         //  films.push(data);
@@ -90,4 +98,23 @@ window.onload = function() {
   }
 
 }
+
+var calculateScore = function(ranking, data) {
+  var imdbRating = parseFloat(data.imdbRating);
+  console.log("IMDB: ", imdbRating);
+  var tomatoRating = parseFloat(data.tomatoRating);
+  console.log("RT: ", tomatoRating);
+  if (ranking == 1) {
+    var rankingScore = 10
+  }
+  else if (ranking == 2) {
+    var rankingScore = 7
+  }
+  else {var rankingScore = 5};
+  console.log("RankingScore: ", rankingScore);
+  var overallScore = imdbRating + tomatoRating + rankingScore;
+  console.log("Overall Score: ", overallScore);
+  return overallScore;
+}
+
 
