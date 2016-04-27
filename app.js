@@ -21,7 +21,7 @@ app.get('/films', function(req, res) {
 app.get('/films/:filmTitle', function(request, response) {
     // In here we will make our HTTP request to the OMDB API
 
-    http.get('http://www.omdbapi.com/?t='+ request.params.filmTitle + '&y=&plot=short&r=json', function(res) {
+    http.get('http://www.omdbapi.com/?t='+ request.params.filmTitle + '&y=&plot=short&tomatoes=true&r=json', function(res) {
         
         var body = '';
         res.on('data', function(d) {
