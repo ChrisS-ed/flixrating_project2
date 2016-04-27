@@ -79,6 +79,9 @@ var input70sfilms = function() {
       console.log( data );
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
+
+      var overallScore2 = calculateScore(2, data);
+
     }, handleThirdFilm())
   }
 
@@ -94,6 +97,8 @@ var input70sfilms = function() {
       console.log( data );
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
+
+      var overallScore3 = calculateScore(3, data);
     })
   }
 
