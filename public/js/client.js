@@ -56,7 +56,6 @@ window.onload = function() {
         // displayFilms();
       
     }, handleSecondFilm())
-
   }
 
   // displayFilms();
