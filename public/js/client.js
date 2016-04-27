@@ -31,6 +31,7 @@ var input70sfilms = function() {
   var input3 = document.querySelector('#film70sInput3');
   var filmView = document.querySelector('#filmDisplay');
   // var storedFilmsView = document.querySelector('#storedFilms');
+  var new70sfilms = [];
 
   // var films = JSON.parse(localStorage.getItem('films')) || [];
 
@@ -58,6 +59,7 @@ var input70sfilms = function() {
 
       currentFilm.overallScore = calculateScore(1, data);
       console.log("FILM1: ", currentFilm);
+      new70sfilms.push(currentFilm);
 
       // add film to films array and put into local storage
         //  films.push(data);
@@ -83,6 +85,7 @@ var input70sfilms = function() {
       filmView.innerHTML = filmDisplay;
 
       currentFilm.overallScore = calculateScore(2, data);
+      new70sfilms.push(currentFilm);
 
     }, handleThirdFilm())
   }
@@ -101,6 +104,8 @@ var input70sfilms = function() {
       filmView.innerHTML = filmDisplay;
 
       currentFilm.overallScore = calculateScore(3, data);
+      new70sfilms.push(currentFilm);
+      console.log("new70sfilms: ", new70sfilms);
 
     })
   }
