@@ -1,6 +1,7 @@
 var Film = function(filmTitle) {
   this.url = 'http://localhost:3000/films/' + filmTitle;
   this.data;
+  this.overallScore = 0;
 }
 
 Film.prototype = {
@@ -55,7 +56,8 @@ var input70sfilms = function() {
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
 
-      var overallScore1 = calculateScore(1, data);
+      currentFilm.overallScore = calculateScore(1, data);
+      console.log("FILM1: ", currentFilm);
 
       // add film to films array and put into local storage
         //  films.push(data);
@@ -80,7 +82,7 @@ var input70sfilms = function() {
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
 
-      var overallScore2 = calculateScore(2, data);
+      currentFilm.overallScore = calculateScore(2, data);
 
     }, handleThirdFilm())
   }
@@ -98,7 +100,8 @@ var input70sfilms = function() {
       var filmDisplay = "<h4>" + data.Title + "</h4>";
       filmView.innerHTML = filmDisplay;
 
-      var overallScore3 = calculateScore(3, data);
+      currentFilm.overallScore = calculateScore(3, data);
+
     })
   }
 
