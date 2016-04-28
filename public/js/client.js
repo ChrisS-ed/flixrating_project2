@@ -46,6 +46,42 @@ var input70sfilms = function() {
   // }
 
   form.onsubmit = function(event) {
+    //handleFirstFilm(handleSecondFilm)
+    grabFilms()
+  }
+
+  var grabFilms = function() {
+    event.preventDefault();
+    var filmTitle1 = input1.value;
+    var filmTitle2 = input2.value;
+    var filmTitle3 = input3.value;
+    var firstFilm = new Film( filmTitle1 );
+    var secondFilm = new Film( filmTitle2 );
+    var thirdFilm = new Film( filmTitle3 );
+
+    firstFilm.get( function() {
+      var data = firstFilm.data;
+      console.log( data );
+      firstFilm.overallScore = calculateScore(1, data);
+      new70sfilms.push(firstFilm);
+    });
+    secondFilm.get( function() {
+      var data = secondFilm.data;
+      console.log( data );
+      secondFilm.overallScore = calculateScore(2, data);
+      new70sfilms.push(secondFilm);
+    });
+    thirdFilm.get( function() {
+      var data = thirdFilm.data;
+      console.log( data );
+      thirdFilm.overallScore = calculateScore(3, data);
+      new70sfilms.push(thirdFilm);
+    });
+  }
+
+  // displayFilms();
+
+  var handleFirstFilm = function(callback) {
     event.preventDefault();
     var filmTitle = input1.value;
     var currentFilm = new Film( filmTitle );
@@ -63,17 +99,18 @@ var input70sfilms = function() {
 
       console.log("IN FIRST FILM: ", new70sfilms);
 
+      callback();
+
       // add film to films array and put into local storage
         //  films.push(data);
         //  localStorage.setItem('films', JSON.stringify(films));
         //  console.log("From local storage: ", JSON.parse(localStorage.getItem('films'))[0].Title);
         // displayFilms();
       
-    }, handleSecondFilm())
+    })
   }
 
-  // displayFilms();
-  var handleSecondFilm = function() {
+  var handleSecondFilm = function(callback) {
     console.log("IN handleSecondFilm");
     event.preventDefault();
     var filmTitle = input2.value;
@@ -89,7 +126,9 @@ var input70sfilms = function() {
       currentFilm.overallScore = calculateScore(2, data);
       new70sfilms.push(currentFilm);
 
-    }, handleThirdFilm())
+      callback();
+
+    })
   }
 
   var handleThirdFilm = function() {
