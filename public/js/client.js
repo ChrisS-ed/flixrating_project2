@@ -29,7 +29,7 @@ var input70sfilms = function() {
   var input1 = document.querySelector('#film70sInput1');
   var input2 = document.querySelector('#film70sInput2');
   var input3 = document.querySelector('#film70sInput3');
-  var filmView = document.querySelector('#filmDisplay');
+  var new70sFilmsView = document.querySelector('#new70sFilmsDisplay');
   // var storedFilmsView = document.querySelector('#storedFilms');
   var new70sfilms = [];
 
@@ -54,12 +54,14 @@ var input70sfilms = function() {
     currentFilm.get( function() {
       var data = currentFilm.data;
       console.log( data );
-      var filmDisplay = "<h4>" + data.Title + "</h4>";
-      filmView.innerHTML = filmDisplay;
+      //var filmDisplay = "<h4>" + data.Title + "</h4>";
+      //filmView.innerHTML = filmDisplay;
 
       currentFilm.overallScore = calculateScore(1, data);
       console.log("FILM1: ", currentFilm);
       new70sfilms.push(currentFilm);
+
+      console.log("IN FIRST FILM: ", new70sfilms);
 
       // add film to films array and put into local storage
         //  films.push(data);
@@ -81,8 +83,8 @@ var input70sfilms = function() {
     currentFilm.get( function() {
       var data = currentFilm.data;
       console.log( data );
-      var filmDisplay = "<h4>" + data.Title + "</h4>";
-      filmView.innerHTML = filmDisplay;
+      //var filmDisplay = "<h4>" + data.Title + "</h4>";
+      //filmView.innerHTML = filmDisplay;
 
       currentFilm.overallScore = calculateScore(2, data);
       new70sfilms.push(currentFilm);
@@ -100,14 +102,28 @@ var input70sfilms = function() {
     currentFilm.get( function() {
       var data = currentFilm.data;
       console.log( data );
-      var filmDisplay = "<h4>" + data.Title + "</h4>";
-      filmView.innerHTML = filmDisplay;
+      //var filmDisplay = "<h4>" + data.Title + "</h4>";
+      //filmView.innerHTML = filmDisplay;
 
       currentFilm.overallScore = calculateScore(3, data);
       new70sfilms.push(currentFilm);
       console.log("new70sfilms: ", new70sfilms);
+      //displayNewFilms(new70sfilms, new70sFilmsView);
+    }, displayNewFilms())
+  }
 
-    })
+  var displayNewFilms = function(films, filmsView) {
+    new70sfilms.sort(function(a, b) {
+        return b.overallScore - a.overallScore;
+    });
+    console.log("SORTED FILMS: ", new70sfilms);
+    //filmsView.innerHTML = '';
+    for (film in new70sfilms) {
+      //var data = films[film];
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + new70sfilms[film].data.Title + "</h4>";
+      new70sFilmsView.appendChild(li);
+    }
   }
 
 }
@@ -130,4 +146,17 @@ var calculateScore = function(ranking, data) {
   return overallScore;
 }
 
+// var displayNewFilms = function(films, filmsView) {
+//   films.sort(function(a, b) {
+//       return b.overallScore - a.overallScore;
+//   });
+//   console.log("SORTED FILMS: ", films);
+//   //filmsView.innerHTML = '';
+//   for (film in films) {
+//     //var data = films[film];
+//     var li = document.createElement('li');
+//     li.innerHTML = "<h4>" + films[film].data.Title + "</h4>";
+//     filmsView.appendChild(li);
+//   }
+// }
 
