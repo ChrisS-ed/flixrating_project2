@@ -30,8 +30,9 @@ var input70sfilms = function() {
   var input2 = document.querySelector('#film70sInput2');
   var input3 = document.querySelector('#film70sInput3');
   var new70sFilmsView = document.querySelector('#new70sFilmsDisplay');
-  // var storedFilmsView = document.querySelector('#storedFilms');
+  var stored70sFilmsView = document.querySelector('#stored70sFilms');
   var new70sfilms = [];
+  var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
 
   // var films = JSON.parse(localStorage.getItem('films')) || [];
 
@@ -65,6 +66,7 @@ var input70sfilms = function() {
       if (counter < 1) {
         console.log("GOT ALL THREE");
         displayNewFilms();
+        displayBestFilms();
       }
     }
 
@@ -83,7 +85,7 @@ var input70sfilms = function() {
       new70sfilms.push(secondFilm);
       waitForFilms();
     });
-    
+
     thirdFilm.get( function() {
       var data = thirdFilm.data;
       console.log( data );
@@ -170,6 +172,9 @@ var input70sfilms = function() {
     });
     console.log("SORTED FILMS: ", new70sfilms);
     //filmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Your top films of the 1970s:</h4>";
+    new70sFilmsView.appendChild(h4);
     for (film in new70sfilms) {
       //var data = films[film];
       var ranking = parseInt(film) + 1;
@@ -177,6 +182,28 @@ var input70sfilms = function() {
       li.innerHTML = "<h4>" + ranking + ".  " + new70sfilms[film].data.Title + ", overall score: " + new70sfilms[film].overallScore + "</h4>";
       new70sFilmsView.appendChild(li);
     }
+  }
+
+  var displayBestFilms = function() {
+    if (best70sfilms.length === 0) {
+      console.log("TRUE");
+      best70sfilms.push(new70sfilms[0]);
+      best70sfilms.push(new70sfilms[1]);
+      best70sfilms.push(new70sfilms[2]);
+      console.log(best70sfilms);
+    }
+
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Top films of the 1970s (based on all votes):</h4>";
+    stored70sFilmsView.appendChild(h4);
+    for (film in best70sfilms) {
+      //var data = films[film];
+      var ranking = parseInt(film) + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + best70sfilms[film].data.Title + ", overall score: " + best70sfilms[film].overallScore + "</h4>";
+      stored70sFilmsView.appendChild(li);
+    }
+    
   }
 
 }
