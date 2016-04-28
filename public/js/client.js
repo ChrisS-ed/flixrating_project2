@@ -171,12 +171,11 @@ var input70sfilms = function() {
         return b.overallScore - a.overallScore;
     });
     console.log("SORTED FILMS: ", new70sfilms);
-    //filmsView.innerHTML = '';
+    new70sFilmsView.innerHTML = '';
     var h4 = document.createElement('h4');
     h4.innerHTML = "<h4>Your top films of the 1970s:</h4>";
     new70sFilmsView.appendChild(h4);
     for (film in new70sfilms) {
-      //var data = films[film];
       var ranking = parseInt(film) + 1;
       var li = document.createElement('li');
       li.innerHTML = "<h4>" + ranking + ".  " + new70sfilms[film].data.Title + ", overall score: " + new70sfilms[film].overallScore + "</h4>";
@@ -186,21 +185,35 @@ var input70sfilms = function() {
 
   var displayBestFilms = function() {
     if (best70sfilms.length === 0) {
-      console.log("TRUE");
       best70sfilms.push(new70sfilms[0]);
       best70sfilms.push(new70sfilms[1]);
       best70sfilms.push(new70sfilms[2]);
       console.log(best70sfilms);
     }
+    else {
+      //loop through best films and insert new film in correct position by overall score, or update existing film's score and position (add to local storage)
+      for (newFilm in new70sfilms) {
+        for (bestFilm in best70sfilms) {
+          if (newFilm.overallScore > bestFilm.overallScore) {
+            best70sfilms.splice(bestFilm.index, 0, newFilm);
+          }
+        }
+      }
+    }
 
+    // add film to films array and put into local storage
+    localStorage.setItem('best70sfilms', JSON.stringify(best70sfilms));
+    console.log("From local storage: ", JSON.parse(localStorage.getItem('best70sfilms')));
+    
+
+    stored70sFilmsView.innerHTML = '';
     var h4 = document.createElement('h4');
     h4.innerHTML = "<h4>Top films of the 1970s (based on all votes):</h4>";
     stored70sFilmsView.appendChild(h4);
-    for (film in best70sfilms) {
-      //var data = films[film];
-      var ranking = parseInt(film) + 1;
+    for (i=0; i<=2; i++) {
+      var ranking = i + 1;
       var li = document.createElement('li');
-      li.innerHTML = "<h4>" + ranking + ".  " + best70sfilms[film].data.Title + ", overall score: " + best70sfilms[film].overallScore + "</h4>";
+      li.innerHTML = "<h4>" + ranking + ".  " + best70sfilms[i].data.Title + ", overall score: " + best70sfilms[i].overallScore + "</h4>";
       stored70sFilmsView.appendChild(li);
     }
     
