@@ -47,7 +47,12 @@ var input70sfilms = function() {
 
   form.onsubmit = function(event) {
     //handleFirstFilm(handleSecondFilm)
-    grabFilms()
+    grabFilms();
+    // while (new70sfilms.length < 3) {
+    //   console.log("WAITING...")
+    // }
+    // console.log("FINISHED GRABBING FILMS");
+    // displayNewFilms(new70sfilms, new70sFilmsView);
   }
 
   var grabFilms = function() {
@@ -59,27 +64,46 @@ var input70sfilms = function() {
     var secondFilm = new Film( filmTitle2 );
     var thirdFilm = new Film( filmTitle3 );
 
+    var counter = 3;
+    var waitForFilms = function() {
+      console.log("COUNTER: ", counter);
+      counter--;
+      if (counter < 1) {
+        console.log("GOT ALL THREE");
+        displayNewFilms();
+      }
+    }
+
     firstFilm.get( function() {
       var data = firstFilm.data;
       console.log( data );
       firstFilm.overallScore = calculateScore(1, data);
       new70sfilms.push(firstFilm);
+      waitForFilms();
+      
     });
     secondFilm.get( function() {
       var data = secondFilm.data;
       console.log( data );
       secondFilm.overallScore = calculateScore(2, data);
       new70sfilms.push(secondFilm);
+      waitForFilms();
+      
     });
     thirdFilm.get( function() {
       var data = thirdFilm.data;
       console.log( data );
       thirdFilm.overallScore = calculateScore(3, data);
       new70sfilms.push(thirdFilm);
+      waitForFilms();
+      
+      //displayNewFilms();
+      //callback()
     });
-  }
 
-  // displayFilms();
+    //callback();
+
+  }
 
   var handleFirstFilm = function(callback) {
     event.preventDefault();
@@ -151,7 +175,7 @@ var input70sfilms = function() {
     }, displayNewFilms())
   }
 
-  var displayNewFilms = function(films, filmsView) {
+  var displayNewFilms = function() {
     new70sfilms.sort(function(a, b) {
         return b.overallScore - a.overallScore;
     });
@@ -185,17 +209,4 @@ var calculateScore = function(ranking, data) {
   return overallScore;
 }
 
-// var displayNewFilms = function(films, filmsView) {
-//   films.sort(function(a, b) {
-//       return b.overallScore - a.overallScore;
-//   });
-//   console.log("SORTED FILMS: ", films);
-//   //filmsView.innerHTML = '';
-//   for (film in films) {
-//     //var data = films[film];
-//     var li = document.createElement('li');
-//     li.innerHTML = "<h4>" + films[film].data.Title + "</h4>";
-//     filmsView.appendChild(li);
-//   }
-// }
 
