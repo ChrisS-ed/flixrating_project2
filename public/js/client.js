@@ -46,13 +46,7 @@ var input70sfilms = function() {
   // }
 
   form.onsubmit = function(event) {
-    //handleFirstFilm(handleSecondFilm)
-    grabFilms();
-    // while (new70sfilms.length < 3) {
-    //   console.log("WAITING...")
-    // }
-    // console.log("FINISHED GRABBING FILMS");
-    // displayNewFilms(new70sfilms, new70sFilmsView);
+    grabFilms(); 
   }
 
   var grabFilms = function() {
@@ -80,28 +74,23 @@ var input70sfilms = function() {
       firstFilm.overallScore = calculateScore(1, data);
       new70sfilms.push(firstFilm);
       waitForFilms();
-      
     });
+
     secondFilm.get( function() {
       var data = secondFilm.data;
       console.log( data );
       secondFilm.overallScore = calculateScore(2, data);
       new70sfilms.push(secondFilm);
       waitForFilms();
-      
     });
+    
     thirdFilm.get( function() {
       var data = thirdFilm.data;
       console.log( data );
       thirdFilm.overallScore = calculateScore(3, data);
       new70sfilms.push(thirdFilm);
       waitForFilms();
-      
-      //displayNewFilms();
-      //callback()
     });
-
-    //callback();
 
   }
 
@@ -183,8 +172,9 @@ var input70sfilms = function() {
     //filmsView.innerHTML = '';
     for (film in new70sfilms) {
       //var data = films[film];
+      var ranking = parseInt(film) + 1;
       var li = document.createElement('li');
-      li.innerHTML = "<h4>" + new70sfilms[film].data.Title + "</h4>";
+      li.innerHTML = "<h4>" + ranking + ".  " + new70sfilms[film].data.Title + ", overall score: " + new70sfilms[film].overallScore + "</h4>";
       new70sFilmsView.appendChild(li);
     }
   }
