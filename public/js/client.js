@@ -17,6 +17,9 @@ Film.prototype = {
   }
 }
 
+var new70sfilms = [];
+var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
+
 window.onload = function() {
 
   input70sfilms();
@@ -31,8 +34,8 @@ var input70sfilms = function() {
   var input3 = document.querySelector('#film70sInput3');
   var new70sFilmsView = document.querySelector('#new70sFilmsDisplay');
   var stored70sFilmsView = document.querySelector('#stored70sFilms');
-  var new70sfilms = [];
-  var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
+  // var new70sfilms = [];
+  // var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
 
   // var films = JSON.parse(localStorage.getItem('films')) || [];
 
@@ -200,24 +203,29 @@ var input70sfilms = function() {
         // console.log("FOUND ", new70sfilms[newFilm].data.Title, "in new70sfilms")
         // check if film already exists in best70sfilms: if so update the film's overall score and sort array
         
-        for (var i = best70sfilms.length - 1; i >= 0; i--) {
-          if (new70sfilms[newFilm].data.Title === best70sfilms[i].data.Title) {
-            console.log("FOUND ", new70sfilms[newFilm].data.Title, "in best70sfilms");
-            console.log("NEW FILM = ", newFilm, (newFilm == 0));
-            if (newFilm == 0) {
-              console.log("new film = 0: add 10");
-              best70sfilms[i].overallScore += 10
-            }
-            else if (newFilm == 1) {
-              console.log("new film = 1: add 7");
-              best70sfilms[i].overallScore += 7
-            }
-            else if (newFilm == 2) {
-              console.log("new film = 2: add 5");
-              best70sfilms[i].overallScore += 5
-            }
-          }
+        if (filmFoundInDatabase(new70sfilms[newFilm], newFilm, best70sfilms)) {
+          console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
+            
         }
+
+        // for (var i = best70sfilms.length - 1; i >= 0; i--) {
+        //   if (new70sfilms[newFilm].data.Title === best70sfilms[i].data.Title) {
+        //     console.log("FOUND ", new70sfilms[newFilm].data.Title, "in best70sfilms");
+        //     console.log("NEW FILM = ", newFilm, (newFilm == 0));
+        //     if (newFilm == 0) {
+        //       console.log("new film = 0: add 10");
+        //       best70sfilms[i].overallScore += 10
+        //     }
+        //     else if (newFilm == 1) {
+        //       console.log("new film = 1: add 7");
+        //       best70sfilms[i].overallScore += 7
+        //     }
+        //     else if (newFilm == 2) {
+        //       console.log("new film = 2: add 5");
+        //       best70sfilms[i].overallScore += 5
+        //     }
+        //   }
+        // }
 
         for (bestFilm in best70sfilms) {
           //console.log("Best film: ", best70sfilms[bestFilm]);
@@ -255,9 +263,9 @@ var input70sfilms = function() {
 
 var calculateScore = function(ranking, data) {
   var imdbRating = parseFloat(data.imdbRating);
-  console.log("IMDB: ", imdbRating);
+  //console.log("IMDB: ", imdbRating);
   var tomatoRating = parseFloat(data.tomatoRating);
-  console.log("RT: ", tomatoRating);
+  //console.log("RT: ", tomatoRating);
   if (ranking == 1) {
     var rankingScore = 10
   }
@@ -265,10 +273,39 @@ var calculateScore = function(ranking, data) {
     var rankingScore = 7
   }
   else {var rankingScore = 5};
-  console.log("RankingScore: ", rankingScore);
+  //console.log("RankingScore: ", rankingScore);
   var overallScore = imdbRating + tomatoRating + rankingScore;
-  console.log("Overall Score: ", overallScore);
+  //console.log("Overall Score: ", overallScore);
   return overallScore;
 }
 
+var filmFoundInDatabase = function(film, rank, bestFilmList) {
+  for (var i = bestFilmList.length - 1; i >= 0; i--) {
+    console.log("CHECKING NEW FILM ", film.data.Title, " AGAINST ", bestFilmList[i].data.Title);
+    if (film.data.Title === bestFilmList[i].data.Title) {
+      console.log("FILM FOUND ", film.data.Title, "in best70sfilms, with rank", rank);
+      console.log("RANK 0: ", (rank == 0));
+      console.log("RANK 1: ", (rank == 1));
+      console.log("RANK 2: ", (rank == 2));
 
+      if (rank == 0) {
+        console.log("new film = 1st: add 10");
+        best70sfilms[i].overallScore += 10
+      }
+      else if (rank == 1) {
+        console.log("new film = 2nd: add 7");
+        best70sfilms[i].overallScore += 7
+      }
+      else if (rank == 2) {
+        console.log("new film = 3rd: add 5");
+        best70sfilms[i].overallScore += 5
+      }
+
+      return true;
+    }
+    else {
+      console.log("FILM ", film.data.Title, " NOT FOUND");
+      return false;
+    }
+  }
+}
