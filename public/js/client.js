@@ -193,10 +193,17 @@ var input70sfilms = function() {
     else {
       //loop through best films and insert new film in correct position by overall score, or update existing film's score and position (add to local storage)
       for (newFilm in new70sfilms) {
+        // console.log("FOUND ", new70sfilms[newFilm].data.Title, "in new70sfilms")
+        // check if film already exists in best70sfilms: if so update the film's overall score and sort array
+        for (var i = best70sfilms.length - 1; i >= 0; i--) {
+          if (new70sfilms[newFilm].data.Title === best70sfilms[i].data.Title) {
+            console.log("FOUND ", new70sfilms[newFilm].data.Title, "in best70sfilms");
+          }
+        }
+
         for (bestFilm in best70sfilms) {
           console.log("Best film: ", best70sfilms[bestFilm]);
-          // check if film already exists in best70sfilms: if so update the film's overall score and sort array
-
+          
           // else if score is better than other film, put new film in correct place in bestfilm array
           if (newFilm.overallScore > bestFilm.overallScore) {
             best70sfilms.splice(bestFilm.index, 0, newFilm);
