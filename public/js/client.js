@@ -34,20 +34,6 @@ var input70sfilms = function() {
   var input3 = document.querySelector('#film70sInput3');
   var new70sFilmsView = document.querySelector('#new70sFilmsDisplay');
   var stored70sFilmsView = document.querySelector('#stored70sFilms');
-  // var new70sfilms = [];
-  // var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
-
-  // var films = JSON.parse(localStorage.getItem('films')) || [];
-
-  // var displayFilms = function() {
-  //   storedFilmsView.innerHTML = '';
-  //   for (film in films) {
-  //     var data = films[film];
-  //     var li = document.createElement('li');
-  //     li.innerHTML = "<h4>" + data.Title + "</h4>";
-  //     storedFilmsView.appendChild(li);
-  //   }
-  // }
 
   form.onsubmit = function(event) {
     grabFilms(); 
@@ -99,76 +85,6 @@ var input70sfilms = function() {
 
   }
 
-  // var handleFirstFilm = function(callback) {
-  //   event.preventDefault();
-  //   var filmTitle = input1.value;
-  //   var currentFilm = new Film( filmTitle );
-  //   console.log(currentFilm);
-
-  //   currentFilm.get( function() {
-  //     var data = currentFilm.data;
-  //     console.log( data );
-  //     //var filmDisplay = "<h4>" + data.Title + "</h4>";
-  //     //filmView.innerHTML = filmDisplay;
-
-  //     currentFilm.overallScore = calculateScore(1, data);
-  //     console.log("FILM1: ", currentFilm);
-  //     new70sfilms.push(currentFilm);
-
-  //     console.log("IN FIRST FILM: ", new70sfilms);
-
-  //     callback();
-
-  //     // add film to films array and put into local storage
-  //       //  films.push(data);
-  //       //  localStorage.setItem('films', JSON.stringify(films));
-  //       //  console.log("From local storage: ", JSON.parse(localStorage.getItem('films'))[0].Title);
-  //       // displayFilms();
-      
-  //   })
-  // }
-
-  // var handleSecondFilm = function(callback) {
-  //   console.log("IN handleSecondFilm");
-  //   event.preventDefault();
-  //   var filmTitle = input2.value;
-  //   var currentFilm = new Film( filmTitle );
-  //   console.log(currentFilm);
-
-  //   currentFilm.get( function() {
-  //     var data = currentFilm.data;
-  //     console.log( data );
-  //     //var filmDisplay = "<h4>" + data.Title + "</h4>";
-  //     //filmView.innerHTML = filmDisplay;
-
-  //     currentFilm.overallScore = calculateScore(2, data);
-  //     new70sfilms.push(currentFilm);
-
-  //     callback();
-
-  //   })
-  // }
-
-  // var handleThirdFilm = function() {
-  //   console.log("IN handleThirdFilm");
-  //   event.preventDefault();
-  //   var filmTitle = input3.value;
-  //   var currentFilm = new Film( filmTitle );
-  //   console.log(currentFilm);
-
-  //   currentFilm.get( function() {
-  //     var data = currentFilm.data;
-  //     console.log( data );
-  //     //var filmDisplay = "<h4>" + data.Title + "</h4>";
-  //     //filmView.innerHTML = filmDisplay;
-
-  //     currentFilm.overallScore = calculateScore(3, data);
-  //     new70sfilms.push(currentFilm);
-  //     console.log("new70sfilms: ", new70sfilms);
-  //     //displayNewFilms(new70sfilms, new70sFilmsView);
-  //   }, displayNewFilms())
-  // }
-
   var displayNewFilms = function() {
     new70sfilms.sort(function(a, b) {
         return b.overallScore - a.overallScore;
@@ -197,12 +113,12 @@ var input70sfilms = function() {
       best70sfilms.push(new70sfilms[2]);
       // console.log(best70sfilms);
     }
-    else {
-      // loop through best films and insert new film in correct position by overall score, or update existing film's score and position (add to local storage)
-      for (newFilm in new70sfilms) {
-        // console.log("FOUND ", new70sfilms[newFilm].data.Title, "in new70sfilms")
 
-        // check if film already exists in best70sfilms: if so update the film's overall score and sort array
+    else {
+
+      for (newFilm in new70sfilms) {
+        
+        // if film already exists in best70sfilms: update the film's overall score and sort array
         if (filmFoundInDatabase(new70sfilms[newFilm], newFilm, best70sfilms)) {
           console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
           best70sfilms.sort(function(a, b) {
@@ -210,41 +126,18 @@ var input70sfilms = function() {
           });
         }
 
-        // for (var i = best70sfilms.length - 1; i >= 0; i--) {
-        //   if (new70sfilms[newFilm].data.Title === best70sfilms[i].data.Title) {
-        //     console.log("FOUND ", new70sfilms[newFilm].data.Title, "in best70sfilms");
-        //     console.log("NEW FILM = ", newFilm, (newFilm == 0));
-        //     if (newFilm == 0) {
-        //       console.log("new film = 0: add 10");
-        //       best70sfilms[i].overallScore += 10
-        //     }
-        //     else if (newFilm == 1) {
-        //       console.log("new film = 1: add 7");
-        //       best70sfilms[i].overallScore += 7
-        //     }
-        //     else if (newFilm == 2) {
-        //       console.log("new film = 2: add 5");
-        //       best70sfilms[i].overallScore += 5
-        //     }
-        //   }
-        // }
-
         else {
-
-          for (bestFilm in best70sfilms) {
-            //console.log("Best film: ", best70sfilms[bestFilm]);
-            
-            // else if score is better than other film, put new film in correct place in bestfilm array
-            if (newFilm.overallScore > bestFilm.overallScore) {
-              best70sfilms.splice(bestFilm.index, 0, newFilm);
-            }
-            // else add new film to end of bestfilm array
-          }
+          // film not in best film list: add to list and sort
+          console.log("FILM NOT FOUND IN DATABASE: SPLICE IN ", new70sfilms[newFilm]);
+          best70sfilms.push(new70sfilms[newFilm]);
+          best70sfilms.sort(function(a, b) {
+          return b.overallScore - a.overallScore;
+          });
 
         }
-
       }
     }
+    
 
     console.log("BEST FILMS AFTER UPDATE: ", best70sfilms);
 
@@ -310,11 +203,8 @@ var filmFoundInDatabase = function(film, rank, bestFilmList) {
 
       return true;
     }
-    // else {
-    //   console.log("FILM ", film.data.Title, " NOT FOUND");
-    //   return false;
-    // }
   }
+
   console.log("FILM ", film.data.Title, " NOT FOUND");
   return false;
 }
