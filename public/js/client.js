@@ -190,7 +190,7 @@ var input70sfilms = function() {
 
     console.log("BEST FILMS BEFORE UPDATE: ", best70sfilms);
 
-    // check if bestfilms array is empty
+    // if bestfilms array is empty, add new films
     if (best70sfilms.length === 0) {
       best70sfilms.push(new70sfilms[0]);
       best70sfilms.push(new70sfilms[1]);
@@ -198,14 +198,16 @@ var input70sfilms = function() {
       // console.log(best70sfilms);
     }
     else {
-      //loop through best films and insert new film in correct position by overall score, or update existing film's score and position (add to local storage)
+      // loop through best films and insert new film in correct position by overall score, or update existing film's score and position (add to local storage)
       for (newFilm in new70sfilms) {
         // console.log("FOUND ", new70sfilms[newFilm].data.Title, "in new70sfilms")
+
         // check if film already exists in best70sfilms: if so update the film's overall score and sort array
-        
         if (filmFoundInDatabase(new70sfilms[newFilm], newFilm, best70sfilms)) {
           console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
-            
+          best70sfilms.sort(function(a, b) {
+            return b.overallScore - a.overallScore;
+          });
         }
 
         // for (var i = best70sfilms.length - 1; i >= 0; i--) {
@@ -227,15 +229,20 @@ var input70sfilms = function() {
         //   }
         // }
 
-        for (bestFilm in best70sfilms) {
-          //console.log("Best film: ", best70sfilms[bestFilm]);
-          
-          // else if score is better than other film, put new film in correct place in bestfilm array
-          if (newFilm.overallScore > bestFilm.overallScore) {
-            best70sfilms.splice(bestFilm.index, 0, newFilm);
+        else {
+
+          for (bestFilm in best70sfilms) {
+            //console.log("Best film: ", best70sfilms[bestFilm]);
+            
+            // else if score is better than other film, put new film in correct place in bestfilm array
+            if (newFilm.overallScore > bestFilm.overallScore) {
+              best70sfilms.splice(bestFilm.index, 0, newFilm);
+            }
+            // else add new film to end of bestfilm array
           }
-          // else add new film to end of bestfilm array
+
         }
+
       }
     }
 
@@ -303,9 +310,11 @@ var filmFoundInDatabase = function(film, rank, bestFilmList) {
 
       return true;
     }
-    else {
-      console.log("FILM ", film.data.Title, " NOT FOUND");
-      return false;
-    }
+    // else {
+    //   console.log("FILM ", film.data.Title, " NOT FOUND");
+    //   return false;
+    // }
   }
+  console.log("FILM ", film.data.Title, " NOT FOUND");
+  return false;
 }
