@@ -57,6 +57,8 @@ var input70sfilms = function() {
         console.log("GOT ALL THREE");
         displayNewFilms();
         displayBestFilms();
+        document.getElementById("submit70s").disabled = true;
+        document.getElementById("submit80s").disabled = false;
       }
     }
 
