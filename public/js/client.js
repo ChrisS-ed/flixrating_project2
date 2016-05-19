@@ -22,6 +22,7 @@ var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
 
 window.onload = function() {
 
+  document.getElementById("submit80s").disabled = true;
   input70sfilms();
 
 }
