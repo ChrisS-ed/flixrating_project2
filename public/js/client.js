@@ -48,6 +48,19 @@ var input70sfilms = function() {
     var filmTitle1 = input1.value;
     var filmTitle2 = input2.value;
     var filmTitle3 = input3.value;
+
+    // catch input errors before API call
+    var message = document.getElementById("message70s");
+    message.innerHTML = "";
+    try { 
+      if (filmTitle1 == "" || filmTitle2 == "" || filmTitle3 == "") throw "film input field is empty";
+      if (filmTitle1 == filmTitle2 || filmTitle2 == filmTitle3 || filmTitle1 == filmTitle3) throw "each film can only be input once";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return;
+    }
+
     var firstFilm = new Film( filmTitle1 );
     var secondFilm = new Film( filmTitle2 );
     var thirdFilm = new Film( filmTitle3 );
@@ -216,6 +229,19 @@ var input80sfilms = function() {
     var filmTitle1 = input1.value;
     var filmTitle2 = input2.value;
     var filmTitle3 = input3.value;
+
+    // catch input errors before API call
+    var message = document.getElementById("message80s");
+    message.innerHTML = "";
+    try { 
+      if (filmTitle1 == "" || filmTitle2 == "" || filmTitle3 == "") throw "film input field is empty";
+      if (filmTitle1 == filmTitle2 || filmTitle2 == filmTitle3 || filmTitle1 == filmTitle3) throw "each film can only be input once";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return;
+    }
+
     var firstFilm = new Film( filmTitle1 );
     var secondFilm = new Film( filmTitle2 );
     var thirdFilm = new Film( filmTitle3 );
