@@ -22,11 +22,13 @@ window.onload = function() {
   document.getElementById("submit80s").disabled = true;
   document.getElementById("submit90s").disabled = true;
   document.getElementById("submit00s").disabled = true;
+  document.getElementById("submit10s").disabled = true;
   //localStorage.clear();
   input70sfilms();
   input80sfilms();
   input90sfilms();
   input00sfilms();
+  input10sfilms();
 
 }
 
@@ -858,6 +860,212 @@ var input00sfilms = function() {
 
 }
 
+var input10sfilms = function() {
+
+  var form = document.querySelector('#filmSearch10s');
+  var input1 = document.querySelector('#film10sInput1');
+  var input2 = document.querySelector('#film10sInput2');
+  var input3 = document.querySelector('#film10sInput3');
+  var new10sFilmsView = document.querySelector('#new10sFilmsDisplay');
+  var stored10sFilmsView = document.querySelector('#stored10sFilms');
+  var new10sfilms = [];
+  var best10sfilms = JSON.parse(localStorage.getItem('best10sfilms')) || [];
+
+  form.onsubmit = function(event) {
+    grabFilms(); 
+  }
+
+  var grabFilms = function() {
+    event.preventDefault();
+    var filmTitle1 = input1.value;
+    var filmTitle2 = input2.value;
+    var filmTitle3 = input3.value;
+
+    // catch input errors before API call
+    var message = document.getElementById("message10s");
+    message.innerHTML = "";
+    try { 
+      if (filmTitle1 == "" || filmTitle2 == "" || filmTitle3 == "") throw "film input field is empty";
+      if (filmTitle1 == filmTitle2 || filmTitle2 == filmTitle3 || filmTitle1 == filmTitle3) throw "each film can only be input once";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return;
+    }
+
+    var firstFilm = new Film( filmTitle1 );
+    var secondFilm = new Film( filmTitle2 );
+    var thirdFilm = new Film( filmTitle3 );
+
+    var counter = 3;
+    var waitForFilms = function() {
+      //console.log("COUNTER: ", counter);
+      counter--;
+      if (counter < 1) {
+        console.log("GOT ALL THREE");
+
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
+        if (filmErrorFound(filmTitle1, [2010, 2019], firstFilm.data) || filmErrorFound(filmTitle2, [2010, 2019], secondFilm.data) || filmErrorFound(filmTitle3, [2010, 2019], thirdFilm.data)) {
+          new10sfilms = [];
+          return;
+        }
+
+        displayNewFilms();
+        displayBestFilms();
+        document.getElementById("submit10s").disabled = true;
+        document.getElementById("submit70s").disabled = false;
+      }
+    }
+
+    firstFilm.get( function() {
+      var data = firstFilm.data;
+      console.log("FIRST FILM: ", data );
+      firstFilm.overallScore = calculateScore(1, data);
+      new10sfilms.push(firstFilm);
+      waitForFilms();
+    });
+
+    secondFilm.get( function() {
+      var data = secondFilm.data;
+      console.log("SECOND FILM: ",  data );
+      secondFilm.overallScore = calculateScore(2, data);
+      new10sfilms.push(secondFilm);
+      waitForFilms();
+    });
+
+    thirdFilm.get( function() {
+      var data = thirdFilm.data;
+      console.log("THIRD FILM: ",  data );
+      thirdFilm.overallScore = calculateScore(3, data);
+      new10sfilms.push(thirdFilm);
+      waitForFilms();
+    });
+
+  }
+
+  var filmErrorFound = function(filmTitle, [startDate, endDate], data) {
+    // catch errors after API call
+    console.log("CHECKING FOR ERRORS IN: ", data);
+    console.log("RESPONSE: ", data.Response);
+    var message = document.getElementById("message10s");
+    message.innerHTML = "";
+    try { 
+      if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year == "N/A") throw "film year for '" + filmTitle + "' unavailable";
+      if (data.imdbRating == "N/A" || data.tomatoRating == "N/A") throw "critic rating data for '" + filmTitle + "' unavailable";
+      if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return true;
+    }
+  }
+
+  var displayNewFilms = function() {
+    new10sfilms.sort(function(a, b) {
+        return b.overallScore - a.overallScore;
+    });
+    // console.log("SORTED FILMS: ", new10sfilms);
+    new10sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Your top films of the 2010s:</h4>";
+    new10sFilmsView.appendChild(h4);
+    for (film in new10sfilms) {
+      var ranking = parseInt(film) + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + new10sfilms[film].data.Title + ", overall score: " + new10sfilms[film].overallScore + "</h4>";
+      new10sFilmsView.appendChild(li);
+    }
+  }
+
+  var displayBestFilms = function() {
+
+    console.log("BEST FILMS BEFORE UPDATE: ", best10sfilms);
+
+    // if bestfilms array is empty, add new films
+    if (best10sfilms.length === 0) {
+      best10sfilms.push(new10sfilms[0]);
+      best10sfilms.push(new10sfilms[1]);
+      best10sfilms.push(new10sfilms[2]);
+      // console.log(best10sfilms);
+    }
+
+    else {
+
+      for (newFilm in new10sfilms) {
+        
+        // if film already exists in best10sfilms: update the film's overall score and sort array
+        if (filmFoundInDatabase(new10sfilms[newFilm], newFilm, best10sfilms)) {
+          console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
+          best10sfilms.sort(function(a, b) {
+            return b.overallScore - a.overallScore;
+          });
+        }
+
+        else {
+          // film not in best film list: add to list and sort
+          console.log("FILM NOT FOUND IN DATABASE: SPLICE IN ", new10sfilms[newFilm]);
+          best10sfilms.push(new10sfilms[newFilm]);
+          best10sfilms.sort(function(a, b) {
+          return b.overallScore - a.overallScore;
+          });
+
+        }
+      }
+    }
+    
+    console.log("BEST FILMS AFTER UPDATE: ", best10sfilms);
+
+    // add film to films array and put into local storage
+    localStorage.setItem('best10sfilms', JSON.stringify(best10sfilms));
+    console.log("From local storage: ", JSON.parse(localStorage.getItem('best10sfilms')));
+    
+
+    stored10sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Top films of the 2010s (based on all votes):</h4>";
+    stored10sFilmsView.appendChild(h4);
+    for (i=0; i<=2; i++) {
+      var ranking = i + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + best10sfilms[i].data.Title + ", overall score: " + best10sfilms[i].overallScore + "</h4>";
+      stored10sFilmsView.appendChild(li);
+    }
+  }
+
+  var filmFoundInDatabase = function(film, rank, bestFilmList) {
+  for (var i = bestFilmList.length - 1; i >= 0; i--) {
+    console.log("CHECKING NEW FILM ", film.data.Title, " AGAINST ", bestFilmList[i].data.Title);
+    if (film.data.Title === bestFilmList[i].data.Title) {
+      console.log("FILM FOUND ", film.data.Title, "in best10sfilms, with rank", rank);
+      console.log("RANK 0: ", (rank == 0));
+      console.log("RANK 1: ", (rank == 1));
+      console.log("RANK 2: ", (rank == 2));
+
+      if (rank == 0) {
+        console.log("new film = 1st: add 10");
+        best10sfilms[i].overallScore += 10
+      }
+      else if (rank == 1) {
+        console.log("new film = 2nd: add 7");
+        best10sfilms[i].overallScore += 7
+      }
+      else if (rank == 2) {
+        console.log("new film = 3rd: add 5");
+        best10sfilms[i].overallScore += 5
+      }
+
+      return true;
+    }
+  }
+
+  console.log("FILM ", film.data.Title, " NOT FOUND");
+  return false;
+  }
+
+}
 
 var calculateScore = function(ranking, data) {
   var imdbRating = parseFloat(data.imdbRating);
