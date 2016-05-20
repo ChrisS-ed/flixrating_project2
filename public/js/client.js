@@ -21,10 +21,12 @@ window.onload = function() {
 
   document.getElementById("submit80s").disabled = true;
   document.getElementById("submit90s").disabled = true;
-  localStorage.clear();
+  document.getElementById("submit00s").disabled = true;
+  //localStorage.clear();
   input70sfilms();
   input80sfilms();
   input90sfilms();
+  input00sfilms();
 
 }
 
@@ -649,6 +651,212 @@ var input90sfilms = function() {
 
 }
 
+var input00sfilms = function() {
+
+  var form = document.querySelector('#filmSearch00s');
+  var input1 = document.querySelector('#film00sInput1');
+  var input2 = document.querySelector('#film00sInput2');
+  var input3 = document.querySelector('#film00sInput3');
+  var new00sFilmsView = document.querySelector('#new00sFilmsDisplay');
+  var stored00sFilmsView = document.querySelector('#stored00sFilms');
+  var new00sfilms = [];
+  var best00sfilms = JSON.parse(localStorage.getItem('best00sfilms')) || [];
+
+  form.onsubmit = function(event) {
+    grabFilms(); 
+  }
+
+  var grabFilms = function() {
+    event.preventDefault();
+    var filmTitle1 = input1.value;
+    var filmTitle2 = input2.value;
+    var filmTitle3 = input3.value;
+
+    // catch input errors before API call
+    var message = document.getElementById("message00s");
+    message.innerHTML = "";
+    try { 
+      if (filmTitle1 == "" || filmTitle2 == "" || filmTitle3 == "") throw "film input field is empty";
+      if (filmTitle1 == filmTitle2 || filmTitle2 == filmTitle3 || filmTitle1 == filmTitle3) throw "each film can only be input once";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return;
+    }
+
+    var firstFilm = new Film( filmTitle1 );
+    var secondFilm = new Film( filmTitle2 );
+    var thirdFilm = new Film( filmTitle3 );
+
+    var counter = 3;
+    var waitForFilms = function() {
+      //console.log("COUNTER: ", counter);
+      counter--;
+      if (counter < 1) {
+        console.log("GOT ALL THREE");
+
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
+        if (filmErrorFound(filmTitle1, [2000, 2009], firstFilm.data) || filmErrorFound(filmTitle2, [2000, 2009], secondFilm.data) || filmErrorFound(filmTitle3, [2000, 2009], thirdFilm.data)) {
+          new00sfilms = [];
+          return;
+        }
+
+        displayNewFilms();
+        displayBestFilms();
+        document.getElementById("submit00s").disabled = true;
+        document.getElementById("submit10s").disabled = false;
+      }
+    }
+
+    firstFilm.get( function() {
+      var data = firstFilm.data;
+      console.log("FIRST FILM: ", data );
+      firstFilm.overallScore = calculateScore(1, data);
+      new00sfilms.push(firstFilm);
+      waitForFilms();
+    });
+
+    secondFilm.get( function() {
+      var data = secondFilm.data;
+      console.log("SECOND FILM: ",  data );
+      secondFilm.overallScore = calculateScore(2, data);
+      new00sfilms.push(secondFilm);
+      waitForFilms();
+    });
+
+    thirdFilm.get( function() {
+      var data = thirdFilm.data;
+      console.log("THIRD FILM: ",  data );
+      thirdFilm.overallScore = calculateScore(3, data);
+      new00sfilms.push(thirdFilm);
+      waitForFilms();
+    });
+
+  }
+
+  var filmErrorFound = function(filmTitle, [startDate, endDate], data) {
+    // catch errors after API call
+    console.log("CHECKING FOR ERRORS IN: ", data);
+    console.log("RESPONSE: ", data.Response);
+    var message = document.getElementById("message00s");
+    message.innerHTML = "";
+    try { 
+      if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year == "N/A") throw "film year for '" + filmTitle + "' unavailable";
+      if (data.imdbRating == "N/A" || data.tomatoRating == "N/A") throw "critic rating data for '" + filmTitle + "' unavailable";
+      if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return true;
+    }
+  }
+
+  var displayNewFilms = function() {
+    new00sfilms.sort(function(a, b) {
+        return b.overallScore - a.overallScore;
+    });
+    // console.log("SORTED FILMS: ", new00sfilms);
+    new00sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Your top films of the 2000s:</h4>";
+    new00sFilmsView.appendChild(h4);
+    for (film in new00sfilms) {
+      var ranking = parseInt(film) + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + new00sfilms[film].data.Title + ", overall score: " + new00sfilms[film].overallScore + "</h4>";
+      new00sFilmsView.appendChild(li);
+    }
+  }
+
+  var displayBestFilms = function() {
+
+    console.log("BEST FILMS BEFORE UPDATE: ", best00sfilms);
+
+    // if bestfilms array is empty, add new films
+    if (best00sfilms.length === 0) {
+      best00sfilms.push(new00sfilms[0]);
+      best00sfilms.push(new00sfilms[1]);
+      best00sfilms.push(new00sfilms[2]);
+      // console.log(best00sfilms);
+    }
+
+    else {
+
+      for (newFilm in new00sfilms) {
+        
+        // if film already exists in best00sfilms: update the film's overall score and sort array
+        if (filmFoundInDatabase(new00sfilms[newFilm], newFilm, best00sfilms)) {
+          console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
+          best00sfilms.sort(function(a, b) {
+            return b.overallScore - a.overallScore;
+          });
+        }
+
+        else {
+          // film not in best film list: add to list and sort
+          console.log("FILM NOT FOUND IN DATABASE: SPLICE IN ", new00sfilms[newFilm]);
+          best00sfilms.push(new00sfilms[newFilm]);
+          best00sfilms.sort(function(a, b) {
+          return b.overallScore - a.overallScore;
+          });
+
+        }
+      }
+    }
+    
+    console.log("BEST FILMS AFTER UPDATE: ", best00sfilms);
+
+    // add film to films array and put into local storage
+    localStorage.setItem('best00sfilms', JSON.stringify(best00sfilms));
+    console.log("From local storage: ", JSON.parse(localStorage.getItem('best00sfilms')));
+    
+
+    stored00sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Top films of the 2000s (based on all votes):</h4>";
+    stored00sFilmsView.appendChild(h4);
+    for (i=0; i<=2; i++) {
+      var ranking = i + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + best00sfilms[i].data.Title + ", overall score: " + best00sfilms[i].overallScore + "</h4>";
+      stored00sFilmsView.appendChild(li);
+    }
+  }
+
+  var filmFoundInDatabase = function(film, rank, bestFilmList) {
+  for (var i = bestFilmList.length - 1; i >= 0; i--) {
+    console.log("CHECKING NEW FILM ", film.data.Title, " AGAINST ", bestFilmList[i].data.Title);
+    if (film.data.Title === bestFilmList[i].data.Title) {
+      console.log("FILM FOUND ", film.data.Title, "in best00sfilms, with rank", rank);
+      console.log("RANK 0: ", (rank == 0));
+      console.log("RANK 1: ", (rank == 1));
+      console.log("RANK 2: ", (rank == 2));
+
+      if (rank == 0) {
+        console.log("new film = 1st: add 10");
+        best00sfilms[i].overallScore += 10
+      }
+      else if (rank == 1) {
+        console.log("new film = 2nd: add 7");
+        best00sfilms[i].overallScore += 7
+      }
+      else if (rank == 2) {
+        console.log("new film = 3rd: add 5");
+        best00sfilms[i].overallScore += 5
+      }
+
+      return true;
+    }
+  }
+
+  console.log("FILM ", film.data.Title, " NOT FOUND");
+  return false;
+  }
+
+}
 
 
 var calculateScore = function(ranking, data) {
