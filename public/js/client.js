@@ -275,6 +275,15 @@ var input80sfilms = function() {
       counter--;
       if (counter < 1) {
         console.log("GOT ALL THREE");
+
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
+        if (filmErrorFound(filmTitle1, [1980, 1989], firstFilm.data) || filmErrorFound(filmTitle2, [1980, 1989], secondFilm.data) || filmErrorFound(filmTitle3, [1980, 1989], thirdFilm.data)) {
+          new80sfilms = [];
+          return;
+        }
+
         displayNewFilms();
         displayBestFilms();
         document.getElementById("submit80s").disabled = true;
@@ -284,7 +293,7 @@ var input80sfilms = function() {
 
     firstFilm.get( function() {
       var data = firstFilm.data;
-      //console.log( data );
+      console.log("FIRST FILM: ", data );
       firstFilm.overallScore = calculateScore(1, data);
       new80sfilms.push(firstFilm);
       waitForFilms();
@@ -292,7 +301,7 @@ var input80sfilms = function() {
 
     secondFilm.get( function() {
       var data = secondFilm.data;
-      //console.log( data );
+      console.log("SECOND FILM: ",  data );
       secondFilm.overallScore = calculateScore(2, data);
       new80sfilms.push(secondFilm);
       waitForFilms();
@@ -300,12 +309,30 @@ var input80sfilms = function() {
 
     thirdFilm.get( function() {
       var data = thirdFilm.data;
-      //console.log( data );
+      console.log("THIRD FILM: ",  data );
       thirdFilm.overallScore = calculateScore(3, data);
       new80sfilms.push(thirdFilm);
       waitForFilms();
     });
 
+  }
+
+  var filmErrorFound = function(filmTitle, [startDate, endDate], data) {
+    // catch errors after API call
+    console.log("CHECKING FOR ERRORS IN: ", data);
+    console.log("RESPONSE: ", data.Response);
+    var message = document.getElementById("message80s");
+    message.innerHTML = "";
+    try { 
+      if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year == "N/A") throw "film year for '" + filmTitle + "' unavailable";
+      if (data.imdbRating == "N/A" || data.tomatoRating == "N/A") throw "critic rating data for '" + filmTitle + "' unavailable";
+      if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return true;
+    }
   }
 
   var displayNewFilms = function() {
@@ -361,7 +388,6 @@ var input80sfilms = function() {
       }
     }
     
-
     console.log("BEST FILMS AFTER UPDATE: ", best80sfilms);
 
     // add film to films array and put into local storage
