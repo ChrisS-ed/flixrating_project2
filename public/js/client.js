@@ -11,14 +11,6 @@ Film.prototype = {
     request.open('GET', this.url);
     request.onload = function() {
       that.data = JSON.parse( request.responseText );
-
-      // console.log(that.data);
-      // console.log(that.data.Error);
-      // if (that.data.Response == "False") {
-      //   console.log("***** MOVIE NOT FOUND!")
-      //   return;
-      // }
-
       callback();
     };
     request.send(null);
@@ -80,7 +72,7 @@ var input70sfilms = function() {
         console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
         console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
         console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
-        if (filmErrorFound(filmTitle1, firstFilm.data) || filmErrorFound(filmTitle2, secondFilm.data) || filmErrorFound(filmTitle3, thirdFilm.data)) {
+        if (filmErrorFound(filmTitle1, [1970, 1979], firstFilm.data) || filmErrorFound(filmTitle2, [1970, 1979], secondFilm.data) || filmErrorFound(filmTitle3, [1970, 1979], thirdFilm.data)) {
           new70sfilms = [];
           return;
         }
@@ -118,7 +110,7 @@ var input70sfilms = function() {
 
   }
 
-  var filmErrorFound = function(filmTitle, data) {
+  var filmErrorFound = function(filmTitle, [startDate, endDate], data) {
     // catch errors after API call
     console.log("CHECKING FOR ERRORS IN: ", data);
     console.log("RESPONSE: ", data.Response);
@@ -126,6 +118,7 @@ var input70sfilms = function() {
     message.innerHTML = "";
     try { 
       if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
     }
     catch(err) {
       message.innerHTML = "ERROR: " + err;
@@ -186,7 +179,6 @@ var input70sfilms = function() {
       }
     }
     
-
     console.log("BEST FILMS AFTER UPDATE: ", best70sfilms);
 
     // add film to films array and put into local storage
