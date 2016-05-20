@@ -11,14 +11,19 @@ Film.prototype = {
     request.open('GET', this.url);
     request.onload = function() {
       that.data = JSON.parse( request.responseText );
+
+      // console.log(that.data);
+      // console.log(that.data.Error);
+      // if (that.data.Response == "False") {
+      //   console.log("***** MOVIE NOT FOUND!")
+      //   return;
+      // }
+
       callback();
     };
     request.send(null);
   }
 }
-
-// var new70sfilms = [];
-// var best70sfilms = JSON.parse(localStorage.getItem('best70sfilms')) || [];
 
 window.onload = function() {
 
@@ -71,6 +76,15 @@ var input70sfilms = function() {
       counter--;
       if (counter < 1) {
         console.log("GOT ALL THREE");
+
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", thirdFilm.data);       
+        if (filmErrorFound(firstFilm.data) || filmErrorFound(secondFilm.data) || filmErrorFound(thirdFilm.data)) {
+          new70sfilms = [];
+          return;
+        }
+
         displayNewFilms();
         displayBestFilms();
         document.getElementById("submit70s").disabled = true;
@@ -80,7 +94,7 @@ var input70sfilms = function() {
 
     firstFilm.get( function() {
       var data = firstFilm.data;
-      //console.log( data );
+      console.log("FIRST FILM: ", data );
       firstFilm.overallScore = calculateScore(1, data);
       new70sfilms.push(firstFilm);
       waitForFilms();
@@ -88,7 +102,7 @@ var input70sfilms = function() {
 
     secondFilm.get( function() {
       var data = secondFilm.data;
-      //console.log( data );
+      console.log("SECOND FILM: ",  data );
       secondFilm.overallScore = calculateScore(2, data);
       new70sfilms.push(secondFilm);
       waitForFilms();
@@ -96,12 +110,27 @@ var input70sfilms = function() {
 
     thirdFilm.get( function() {
       var data = thirdFilm.data;
-      //console.log( data );
+      console.log("THIRD FILM: ",  data );
       thirdFilm.overallScore = calculateScore(3, data);
       new70sfilms.push(thirdFilm);
       waitForFilms();
     });
 
+  }
+
+  var filmErrorFound = function(data) {
+    // catch errors after API call
+    console.log("CHECKING FOR ERRORS IN: ", data);
+    console.log("RESPONSE: ", data.Response);
+    var message = document.getElementById("message70s");
+    message.innerHTML = "";
+    try { 
+      if (data.Response == "False") throw "film title not found";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return true;
+    }
   }
 
   var displayNewFilms = function() {
