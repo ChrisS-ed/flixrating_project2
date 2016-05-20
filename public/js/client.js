@@ -118,6 +118,8 @@ var input70sfilms = function() {
     message.innerHTML = "";
     try { 
       if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year == "N/A") throw "film year for '" + filmTitle + "' unavailable";
+      if (data.imdbRating == "N/A" || data.tomatoRating == "N/A") throw "critic rating data for '" + filmTitle + "' unavailable";
       if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
     }
     catch(err) {
