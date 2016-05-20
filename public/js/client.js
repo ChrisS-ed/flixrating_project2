@@ -77,10 +77,10 @@ var input70sfilms = function() {
       if (counter < 1) {
         console.log("GOT ALL THREE");
 
-        console.log("BEFORE DISPLAY, FIRST FILM IS: ", firstFilm.data);       
-        console.log("BEFORE DISPLAY, SECOND FILM IS: ", secondFilm.data);       
-        console.log("BEFORE DISPLAY, THIRD FILM IS: ", thirdFilm.data);       
-        if (filmErrorFound(firstFilm.data) || filmErrorFound(secondFilm.data) || filmErrorFound(thirdFilm.data)) {
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
+        if (filmErrorFound(filmTitle1, firstFilm.data) || filmErrorFound(filmTitle2, secondFilm.data) || filmErrorFound(filmTitle3, thirdFilm.data)) {
           new70sfilms = [];
           return;
         }
@@ -118,14 +118,14 @@ var input70sfilms = function() {
 
   }
 
-  var filmErrorFound = function(data) {
+  var filmErrorFound = function(filmTitle, data) {
     // catch errors after API call
     console.log("CHECKING FOR ERRORS IN: ", data);
     console.log("RESPONSE: ", data.Response);
     var message = document.getElementById("message70s");
     message.innerHTML = "";
     try { 
-      if (data.Response == "False") throw "film title not found";
+      if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
     }
     catch(err) {
       message.innerHTML = "ERROR: " + err;
