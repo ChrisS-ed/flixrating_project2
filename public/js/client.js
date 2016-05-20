@@ -20,8 +20,11 @@ Film.prototype = {
 window.onload = function() {
 
   document.getElementById("submit80s").disabled = true;
+  document.getElementById("submit90s").disabled = true;
+  localStorage.clear();
   input70sfilms();
   input80sfilms();
+  input90sfilms();
 
 }
 
@@ -439,6 +442,214 @@ var input80sfilms = function() {
 
 }
 
+var input90sfilms = function() {
+
+  var form = document.querySelector('#filmSearch90s');
+  var input1 = document.querySelector('#film90sInput1');
+  var input2 = document.querySelector('#film90sInput2');
+  var input3 = document.querySelector('#film90sInput3');
+  var new90sFilmsView = document.querySelector('#new90sFilmsDisplay');
+  var stored90sFilmsView = document.querySelector('#stored90sFilms');
+  var new90sfilms = [];
+  var best90sfilms = JSON.parse(localStorage.getItem('best90sfilms')) || [];
+
+  form.onsubmit = function(event) {
+    grabFilms(); 
+  }
+
+  var grabFilms = function() {
+    event.preventDefault();
+    var filmTitle1 = input1.value;
+    var filmTitle2 = input2.value;
+    var filmTitle3 = input3.value;
+
+    // catch input errors before API call
+    var message = document.getElementById("message90s");
+    message.innerHTML = "";
+    try { 
+      if (filmTitle1 == "" || filmTitle2 == "" || filmTitle3 == "") throw "film input field is empty";
+      if (filmTitle1 == filmTitle2 || filmTitle2 == filmTitle3 || filmTitle1 == filmTitle3) throw "each film can only be input once";
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return;
+    }
+
+    var firstFilm = new Film( filmTitle1 );
+    var secondFilm = new Film( filmTitle2 );
+    var thirdFilm = new Film( filmTitle3 );
+
+    var counter = 3;
+    var waitForFilms = function() {
+      //console.log("COUNTER: ", counter);
+      counter--;
+      if (counter < 1) {
+        console.log("GOT ALL THREE");
+
+        console.log("BEFORE DISPLAY, FIRST FILM IS: ", filmTitle1, firstFilm.data);       
+        console.log("BEFORE DISPLAY, SECOND FILM IS: ", filmTitle2, secondFilm.data);       
+        console.log("BEFORE DISPLAY, THIRD FILM IS: ", filmTitle3, thirdFilm.data);       
+        if (filmErrorFound(filmTitle1, [1990, 1999], firstFilm.data) || filmErrorFound(filmTitle2, [1990, 1999], secondFilm.data) || filmErrorFound(filmTitle3, [1990, 1999], thirdFilm.data)) {
+          new90sfilms = [];
+          return;
+        }
+
+        displayNewFilms();
+        displayBestFilms();
+        document.getElementById("submit90s").disabled = true;
+        document.getElementById("submit00s").disabled = false;
+      }
+    }
+
+    firstFilm.get( function() {
+      var data = firstFilm.data;
+      console.log("FIRST FILM: ", data );
+      firstFilm.overallScore = calculateScore(1, data);
+      new90sfilms.push(firstFilm);
+      waitForFilms();
+    });
+
+    secondFilm.get( function() {
+      var data = secondFilm.data;
+      console.log("SECOND FILM: ",  data );
+      secondFilm.overallScore = calculateScore(2, data);
+      new90sfilms.push(secondFilm);
+      waitForFilms();
+    });
+
+    thirdFilm.get( function() {
+      var data = thirdFilm.data;
+      console.log("THIRD FILM: ",  data );
+      thirdFilm.overallScore = calculateScore(3, data);
+      new90sfilms.push(thirdFilm);
+      waitForFilms();
+    });
+
+  }
+
+  var filmErrorFound = function(filmTitle, [startDate, endDate], data) {
+    // catch errors after API call
+    console.log("CHECKING FOR ERRORS IN: ", data);
+    console.log("RESPONSE: ", data.Response);
+    var message = document.getElementById("message90s");
+    message.innerHTML = "";
+    try { 
+      if (data.Response == "False") throw "film title '" + filmTitle + "' not found";
+      if (data.Year == "N/A") throw "film year for '" + filmTitle + "' unavailable";
+      if (data.imdbRating == "N/A" || data.tomatoRating == "N/A") throw "critic rating data for '" + filmTitle + "' unavailable";
+      if (data.Year < startDate || data.Year > endDate) throw "film out of date range - '" + filmTitle + "' is from " + data.Year;
+    }
+    catch(err) {
+      message.innerHTML = "ERROR: " + err;
+      return true;
+    }
+  }
+
+  var displayNewFilms = function() {
+    new90sfilms.sort(function(a, b) {
+        return b.overallScore - a.overallScore;
+    });
+    // console.log("SORTED FILMS: ", new90sfilms);
+    new90sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Your top films of the 1990s:</h4>";
+    new90sFilmsView.appendChild(h4);
+    for (film in new90sfilms) {
+      var ranking = parseInt(film) + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + new90sfilms[film].data.Title + ", overall score: " + new90sfilms[film].overallScore + "</h4>";
+      new90sFilmsView.appendChild(li);
+    }
+  }
+
+  var displayBestFilms = function() {
+
+    console.log("BEST FILMS BEFORE UPDATE: ", best90sfilms);
+
+    // if bestfilms array is empty, add new films
+    if (best90sfilms.length === 0) {
+      best90sfilms.push(new90sfilms[0]);
+      best90sfilms.push(new90sfilms[1]);
+      best90sfilms.push(new90sfilms[2]);
+      // console.log(best90sfilms);
+    }
+
+    else {
+
+      for (newFilm in new90sfilms) {
+        
+        // if film already exists in best90sfilms: update the film's overall score and sort array
+        if (filmFoundInDatabase(new90sfilms[newFilm], newFilm, best90sfilms)) {
+          console.log("FOUND NEW FILM IN BESTFILMS = ", newFilm, (newFilm == 0));
+          best90sfilms.sort(function(a, b) {
+            return b.overallScore - a.overallScore;
+          });
+        }
+
+        else {
+          // film not in best film list: add to list and sort
+          console.log("FILM NOT FOUND IN DATABASE: SPLICE IN ", new90sfilms[newFilm]);
+          best90sfilms.push(new90sfilms[newFilm]);
+          best90sfilms.sort(function(a, b) {
+          return b.overallScore - a.overallScore;
+          });
+
+        }
+      }
+    }
+    
+    console.log("BEST FILMS AFTER UPDATE: ", best90sfilms);
+
+    // add film to films array and put into local storage
+    localStorage.setItem('best90sfilms', JSON.stringify(best90sfilms));
+    console.log("From local storage: ", JSON.parse(localStorage.getItem('best90sfilms')));
+    
+
+    stored90sFilmsView.innerHTML = '';
+    var h4 = document.createElement('h4');
+    h4.innerHTML = "<h4>Top films of the 1990s (based on all votes):</h4>";
+    stored90sFilmsView.appendChild(h4);
+    for (i=0; i<=2; i++) {
+      var ranking = i + 1;
+      var li = document.createElement('li');
+      li.innerHTML = "<h4>" + ranking + ".  " + best90sfilms[i].data.Title + ", overall score: " + best90sfilms[i].overallScore + "</h4>";
+      stored90sFilmsView.appendChild(li);
+    }
+  }
+
+  var filmFoundInDatabase = function(film, rank, bestFilmList) {
+  for (var i = bestFilmList.length - 1; i >= 0; i--) {
+    console.log("CHECKING NEW FILM ", film.data.Title, " AGAINST ", bestFilmList[i].data.Title);
+    if (film.data.Title === bestFilmList[i].data.Title) {
+      console.log("FILM FOUND ", film.data.Title, "in best90sfilms, with rank", rank);
+      console.log("RANK 0: ", (rank == 0));
+      console.log("RANK 1: ", (rank == 1));
+      console.log("RANK 2: ", (rank == 2));
+
+      if (rank == 0) {
+        console.log("new film = 1st: add 10");
+        best90sfilms[i].overallScore += 10
+      }
+      else if (rank == 1) {
+        console.log("new film = 2nd: add 7");
+        best90sfilms[i].overallScore += 7
+      }
+      else if (rank == 2) {
+        console.log("new film = 3rd: add 5");
+        best90sfilms[i].overallScore += 5
+      }
+
+      return true;
+    }
+  }
+
+  console.log("FILM ", film.data.Title, " NOT FOUND");
+  return false;
+  }
+
+}
+
+
 
 var calculateScore = function(ranking, data) {
   var imdbRating = parseFloat(data.imdbRating);
@@ -453,7 +664,7 @@ var calculateScore = function(ranking, data) {
   }
   else {var rankingScore = 5};
   //console.log("RankingScore: ", rankingScore);
-  var overallScore = imdbRating + tomatoRating + rankingScore;
+  var overallScore = (imdbRating + tomatoRating + rankingScore).toFixed(1);
   //console.log("Overall Score: ", overallScore);
   return overallScore;
 }
