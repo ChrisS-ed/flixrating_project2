@@ -871,9 +871,14 @@ var input10sfilms = function() {
   var stored10sFilmsView = document.querySelector('#stored10sFilms');
   var new10sfilms = [];
   var best10sfilms = JSON.parse(localStorage.getItem('best10sfilms')) || [];
+  var OkButton = document.querySelector('#refreshButton');
 
   form.onsubmit = function(event) {
     grabFilms(); 
+  }
+
+  OkButton.onclick = function() {
+    location.reload();
   }
 
   var grabFilms = function() {
@@ -917,7 +922,7 @@ var input10sfilms = function() {
         displayBestFilms();
         document.getElementById("submit10s").disabled = true;
         var message = document.getElementById("thankYou");
-        message.innerHTML = "Thank you for taking part in FlixRating!";
+        message.innerHTML = "Thank you for taking part in FlixRating! Press OK to start again";
         document.getElementById("refreshButton").disabled = false;
       }
     }
