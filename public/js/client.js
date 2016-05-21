@@ -24,7 +24,7 @@ window.onload = function() {
   document.getElementById("submit00s").disabled = true;
   document.getElementById("submit10s").disabled = true;
   document.getElementById("refreshButton").disabled = true;
-  //localStorage.clear();
+  // localStorage.clear();
   input70sfilms();
   input80sfilms();
   input90sfilms();
@@ -216,18 +216,19 @@ var input70sfilms = function() {
       console.log("RANK 0: ", (rank == 0));
       console.log("RANK 1: ", (rank == 1));
       console.log("RANK 2: ", (rank == 2));
+      console.log("OVERALL SCORE: ", best70sfilms[i].overallScore);
 
       if (rank == 0) {
         console.log("new film = 1st: add 10");
-        best70sfilms[i].overallScore += 10
+        best70sfilms[i].overallScore = parseFloat(best70sfilms[i].overallScore + 10);
       }
       else if (rank == 1) {
         console.log("new film = 2nd: add 7");
-        best70sfilms[i].overallScore += 7
+        best70sfilms[i].overallScore = parseFloat(best70sfilms[i].overallScore + 7);
       }
       else if (rank == 2) {
         console.log("new film = 3rd: add 5");
-        best70sfilms[i].overallScore += 5
+        best70sfilms[i].overallScore = parseFloat(best70sfilms[i].overallScore + 5);
       }
 
       return true;
@@ -426,15 +427,15 @@ var input80sfilms = function() {
 
       if (rank == 0) {
         console.log("new film = 1st: add 10");
-        best80sfilms[i].overallScore += 10
+        best80sfilms[i].overallScore = parseFloat(best80sfilms[i].overallScore + 10);
       }
       else if (rank == 1) {
         console.log("new film = 2nd: add 7");
-        best80sfilms[i].overallScore += 7
+        best80sfilms[i].overallScore = parseFloat(best80sfilms[i].overallScore + 7);
       }
       else if (rank == 2) {
         console.log("new film = 3rd: add 5");
-        best80sfilms[i].overallScore += 5
+        best80sfilms[i].overallScore = parseFloat(best80sfilms[i].overallScore + 5);
       }
 
       return true;
@@ -633,15 +634,15 @@ var input90sfilms = function() {
 
       if (rank == 0) {
         console.log("new film = 1st: add 10");
-        best90sfilms[i].overallScore += 10
+        best90sfilms[i].overallScore = parseFloat(best90sfilms[i].overallScore + 10);
       }
       else if (rank == 1) {
         console.log("new film = 2nd: add 7");
-        best90sfilms[i].overallScore += 7
+        best90sfilms[i].overallScore = parseFloat(best90sfilms[i].overallScore + 7);
       }
       else if (rank == 2) {
         console.log("new film = 3rd: add 5");
-        best90sfilms[i].overallScore += 5
+        best90sfilms[i].overallScore = parseFloat(best90sfilms[i].overallScore + 5);
       }
 
       return true;
@@ -840,15 +841,15 @@ var input00sfilms = function() {
 
       if (rank == 0) {
         console.log("new film = 1st: add 10");
-        best00sfilms[i].overallScore += 10
+        best00sfilms[i].overallScore = parseFloat(best00sfilms[i].overallScore + 10);
       }
       else if (rank == 1) {
         console.log("new film = 2nd: add 7");
-        best00sfilms[i].overallScore += 7
+        best00sfilms[i].overallScore = parseFloat(best00sfilms[i].overallScore + 7);
       }
       else if (rank == 2) {
         console.log("new film = 3rd: add 5");
-        best00sfilms[i].overallScore += 5
+        best00sfilms[i].overallScore = parseFloat(best00sfilms[i].overallScore + 5);
       }
 
       return true;
@@ -1054,15 +1055,15 @@ var input10sfilms = function() {
 
       if (rank == 0) {
         console.log("new film = 1st: add 10");
-        best10sfilms[i].overallScore += 10
+        best10sfilms[i].overallScore = parseFloat(best10sfilms[i].overallScore + 10);
       }
       else if (rank == 1) {
         console.log("new film = 2nd: add 7");
-        best10sfilms[i].overallScore += 7
+        best10sfilms[i].overallScore = parseFloat(best10sfilms[i].overallScore + 7);
       }
       else if (rank == 2) {
         console.log("new film = 3rd: add 5");
-        best10sfilms[i].overallScore += 5
+        best10sfilms[i].overallScore = parseFloat(best10sfilms[i].overallScore + 5);
       }
 
       return true;
