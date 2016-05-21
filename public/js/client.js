@@ -23,6 +23,7 @@ window.onload = function() {
   document.getElementById("submit90s").disabled = true;
   document.getElementById("submit00s").disabled = true;
   document.getElementById("submit10s").disabled = true;
+  document.getElementById("refreshButton").disabled = true;
   //localStorage.clear();
   input70sfilms();
   input80sfilms();
@@ -915,7 +916,9 @@ var input10sfilms = function() {
         displayNewFilms();
         displayBestFilms();
         document.getElementById("submit10s").disabled = true;
-        document.getElementById("submit70s").disabled = false;
+        var message = document.getElementById("thankYou");
+        message.innerHTML = "Thank you for taking part in FlixRating!";
+        document.getElementById("refreshButton").disabled = false;
       }
     }
 
